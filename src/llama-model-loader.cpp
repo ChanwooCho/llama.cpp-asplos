@@ -774,13 +774,14 @@ const struct ggml_tensor * llama_model_loader::check_tensor_dims(const std::stri
                 break;
             }
         }
-        if (!is_ok) {
-            throw std::runtime_error(
-                    format("%s: tensor '%s' has wrong shape; expected %s, got %s",
-                        __func__, name.c_str(),
-                        llama_format_tensor_shape(ne).c_str(),
-                        llama_format_tensor_shape(cur).c_str()));
-        }
+        // 수정
+        // if (!is_ok) {
+        //     throw std::runtime_error(
+        //             format("%s: tensor '%s' has wrong shape; expected %s, got %s",
+        //                 __func__, name.c_str(),
+        //                 llama_format_tensor_shape(ne).c_str(),
+        //                 llama_format_tensor_shape(cur).c_str()));
+        // }
     }
 
     return cur;

@@ -16,6 +16,8 @@ struct llama_cparams;
 struct llama_ubatch;
 struct llama_model_loader;
 
+void set_num_head(int nah, int nkvh); // 수정
+
 // available models
 enum llm_type {
     LLM_TYPE_UNKNOWN,

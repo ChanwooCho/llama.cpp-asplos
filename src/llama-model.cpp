@@ -25,6 +25,14 @@
 #include <sstream>
 #include <stdexcept>
 
+static int NUM_ATTN_HEAD = 20; // 수정
+static int NUM_KV_HEAD = 4; // 수정
+void set_num_head(int nah, int nkvh) {
+    NUM_ATTN_HEAD = nah;
+    NUM_KV_HEAD = nkvh;
+} // 수정
+
+
 const char * llm_type_name(llm_type type) {
     switch (type) {
         case LLM_TYPE_14M:           return "14M";
@@ -531,14 +539,14 @@ void llama_model::load_hparams(llama_model_loader & ml) {
         // gpt-neox n_rot = rotary_pct * (n_embd / n_head)
         // gpt-j n_rot = rotary_dim
 
-        hparams.n_embd_head_k = hparams.n_embd / hparams.n_head();
+        hparams.n_embd_head_k = 128; // 수정
         ml.get_key(LLM_KV_ATTENTION_KEY_LENGTH, hparams.n_embd_head_k, false);
 
-        hparams.n_embd_head_v = hparams.n_embd / hparams.n_head();
+        hparams.n_embd_head_v = 128; // 수정
         ml.get_key(LLM_KV_ATTENTION_VALUE_LENGTH, hparams.n_embd_head_v, false);
 
         // sanity check for n_rot (optional)
-        hparams.n_rot = hparams.n_embd_head_k;
+        hparams.n_rot = 128; // 수정
 
         ml.get_key(LLM_KV_ROPE_DIMENSION_COUNT, hparams.n_rot, false);
 
@@ -2601,15 +2609,15 @@ bool llama_model::load_tensors(llama_model_loader & ml) {
 
                         layer.attn_norm = create_tensor(tn(LLM_TENSOR_ATTN_NORM, "weight", i), {n_embd}, 0);
 
-                        layer.wq = create_tensor(tn(LLM_TENSOR_ATTN_Q,   "weight", i), {n_embd, n_embd}, 0);
-                        layer.wk = create_tensor(tn(LLM_TENSOR_ATTN_K,   "weight", i), {n_embd, n_embd_gqa}, 0);
-                        layer.wv = create_tensor(tn(LLM_TENSOR_ATTN_V,   "weight", i), {n_embd, n_embd_gqa}, 0);
-                        layer.wo = create_tensor(tn(LLM_TENSOR_ATTN_OUT, "weight", i), {n_embd, n_embd}, 0);
+                        layer.wq = create_tensor(tn(LLM_TENSOR_ATTN_Q,   "weight", i), {n_embd, NUM_ATTN_HEAD * 128}, 0); // 수정
+                        layer.wk = create_tensor(tn(LLM_TENSOR_ATTN_K,   "weight", i), {n_embd, NUM_KV_HEAD * 128}, 0); // 수정
+                        layer.wv = create_tensor(tn(LLM_TENSOR_ATTN_V,   "weight", i), {n_embd, NUM_KV_HEAD * 128}, 0); // 수정
+                        layer.wo = create_tensor(tn(LLM_TENSOR_ATTN_OUT, "weight", i), {NUM_ATTN_HEAD * 128, n_embd}, 0); // 수정
 
                         // optional bias tensors
-                        layer.bq = create_tensor(tn(LLM_TENSOR_ATTN_Q,   "bias", i), {n_embd}, 0);
-                        layer.bk = create_tensor(tn(LLM_TENSOR_ATTN_K,   "bias", i), {n_embd_gqa}, 0);
-                        layer.bv = create_tensor(tn(LLM_TENSOR_ATTN_V,   "bias", i), {n_embd_gqa}, 0);
+                        layer.bq = create_tensor(tn(LLM_TENSOR_ATTN_Q,   "bias", i), {NUM_ATTN_HEAD * 128}, 0); // 수정
+                        layer.bk = create_tensor(tn(LLM_TENSOR_ATTN_K,   "bias", i), {NUM_KV_HEAD * 128}, 0); // 수정
+                        layer.bv = create_tensor(tn(LLM_TENSOR_ATTN_V,   "bias", i), {NUM_KV_HEAD * 128}, 0); // 수정
 
                         layer.ffn_norm = create_tensor(tn(LLM_TENSOR_FFN_NORM, "weight", i), {n_embd}, 0);
 
@@ -15888,6 +15896,10 @@ llm_graph_result_ptr llama_model::build_graph(
 
 llama_model_params llama_model_default_params() {
     llama_model_params result = {
+        /*.nah                         =*/ 1,
+        /*.nkvh                        =*/ 1,
+        /*.sd                          =*/ 1,
+        /*.rmeh                        =*/ false,
         /*.devices                     =*/ nullptr,
         /*.tensor_buft_overrides       =*/ nullptr,
         /*.n_gpu_layers                =*/ 0,

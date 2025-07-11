@@ -1101,6 +1101,11 @@ struct llama_model_params common_model_params_to_llama(common_params & params) {
         mparams.n_gpu_layers = params.n_gpu_layers;
     }
 
+    mparams.nah             = params.nah; // 수정
+    mparams.nkvh            = params.nkvh; // 수정
+    mparams.rmeh            = params.rmeh; // 수정
+    mparams.sd              = params.sd; // 수정
+
     mparams.main_gpu        = params.main_gpu;
     mparams.split_mode      = params.split_mode;
     mparams.tensor_split    = params.tensor_split;

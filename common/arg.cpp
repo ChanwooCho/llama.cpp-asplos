@@ -1250,6 +1250,38 @@ common_params_context common_params_parser_init(common_params & params, llama_ex
         }
     };
 
+    add_opt(common_arg(
+        {"-nah"}, "NAH",
+        string_format("number of attention heads (default: %d)", params.nah),
+        [](common_params & params, int value) {
+            params.nah = value;
+        }
+    )); // 수정
+
+    add_opt(common_arg(
+        {"-nkvh"}, "NKVH",
+        string_format("number of kv heads (default: %d)", params.nkvh),
+        [](common_params & params, int value) {
+            params.nkvh = value;
+        }
+    )); // 수정
+
+    add_opt(common_arg(
+        {"-rmeh"}, "RMEH",
+        string_format("remove embedding and classifier (default: %d)", params.rmeh),
+        [](common_params & params, int value) {
+            params.rmeh = value;
+        }
+    )); // 수정
+
+    add_opt(common_arg(
+        {"-sd"}, "SD",
+        string_format("batch size of speculative decoding (default: %d)", params.sd),
+        [](common_params & params, int value) {
+            params.sd = value;
+        }
+    )); // 수정
+
 
     add_opt(common_arg(
         {"-h", "--help", "--usage"},

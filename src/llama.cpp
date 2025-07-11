@@ -25,6 +25,9 @@
 // interface implementation
 //
 
+extern int NUM_ATTN_HEAD; // 수정
+extern int NUM_KV_HEAD; // 수정
+
 struct llama_sampler_chain_params llama_sampler_chain_default_params() {
     struct llama_sampler_chain_params result = {
         /*.no_perf                     =*/ true,
@@ -87,6 +90,9 @@ int64_t llama_time_us(void) {
 static int llama_model_load(const std::string & fname, std::vector<std::string> & splits, llama_model & model, llama_model_params & params) {
     // loading time will be recalculated after the first eval, so
     // we take page faults deferred by mmap() into consideration
+
+    set_num_head(params.nah, params.nkvh);
+
     model.t_load_us = 0;
     time_meas tm(model.t_load_us);
 

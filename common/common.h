@@ -129,6 +129,11 @@ struct common_grammar_trigger {
 struct common_params_sampling {
     uint32_t seed = LLAMA_DEFAULT_SEED; // the seed used to initialize llama_sampler
 
+    int32_t nah                = 1; // 수정
+    int32_t nkvh               = 1; // 수정
+    bool rmeh                  = false; // 수정
+    int32_t sd                 = 1;  // 수정
+
     int32_t n_prev             = 64;    // number of previous tokens to remember
     int32_t n_probs            = 0;     // if greater than 0, output the probabilities of top n_probs tokens.
     int32_t min_keep           = 0;     // 0 = disabled, otherwise samplers should return at least min_keep tokens
@@ -224,6 +229,10 @@ enum common_reasoning_format {
 };
 
 struct common_params {
+    int32_t nah                   =     1; // 수정
+    int32_t nkvh                  =     1; // 수정
+    bool rmeh                     = false; // 수정
+    int32_t sd                    =     1; // 수정
     int32_t n_predict             =    -1; // new tokens to predict
     int32_t n_ctx                 =  4096; // context size
     int32_t n_batch               =  2048; // logical batch size for prompt processing (must be >=32 to use BLAS)
